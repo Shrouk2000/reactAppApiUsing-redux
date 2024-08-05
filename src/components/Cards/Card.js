@@ -2,21 +2,28 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../../store/slice/cartSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, removeFromCart } from '../../store/slice/cartSlice';
 
 function Cards({ id, title, description, imgSrc }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const itemsInCart = useSelector(state => state.cart.items);
 
   const handleCardClick = () => {
     navigate(`/product/${id}`);
   };
 
   const handleAddToCart = (e) => {
-    e.stopPropagation(); // Prevents the card click event from firing
-    console.log('Dispatching addToCart action');
-    dispatch(addToCart()); // Dispatch the addToCart action
+    e.stopPropagation();
+    dispatch(addToCart({ id }));
+  };
+
+  const handleRemoveFromCart = (e) => {
+    e.stopPropagation();
+    if (itemsInCart.includes(id)) {
+      dispatch(removeFromCart({ id }));
+    }
   };
 
   return (
@@ -34,6 +41,9 @@ function Cards({ id, title, description, imgSrc }) {
         </Button>
         <Button variant="success" className="m-2" onClick={handleAddToCart}>
           Add To Cart
+        </Button>
+        <Button variant="danger" onClick={handleRemoveFromCart} disabled={!itemsInCart.includes(id)}>
+          Remove From Cart
         </Button>
       </Card.Body>
     </Card>
