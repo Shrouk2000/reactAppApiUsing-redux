@@ -1,48 +1,119 @@
+import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
 function Register() {
+  const [formValues, setFormValues] = useState({
+    name: "",
+    email: "",
+    userName: "",
+    password: "",
+    confirmPassword: ""
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    name: false,
+    email: false,
+    userName: false,
+    password: false,
+    confirmPassword: false
+  });
+
+  const fields = [
+    {
+      name: 'name',
+      type: 'text',
+      placeholder: 'Name',
+      validate: (value) => /^[A-Za-z\s]+$/.test(value) && value.length >= 2,
+      errorMessage: 'Invalid Name. It must be at least 2 characters long.'
+    },
+    {
+      name: 'email',
+      type: 'email',
+      placeholder: 'Enter email',
+      validate: (value) => value.length > 7 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+      errorMessage: 'Invalid email.'
+    },
+    {
+      name: 'userName',
+      type: 'text',
+      placeholder: 'Username',
+      validate: (value) => value.length >= 5,
+      errorMessage: 'Invalid Username. It must be at least 5 characters long.'
+    },
+    {
+      name: 'password',
+      type: 'password',
+      placeholder: 'Password',
+      validate: (value) => value.length > 7 && /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/.test(value),
+      errorMessage: 'Invalid Password. It must be at least 8 characters long and include a number and a special character.'
+    },
+    {
+      name: 'confirmPassword',
+      type: 'password',
+      placeholder: 'Confirm Password',
+      validate: (value) => value === formValues.password,
+      errorMessage: 'Passwords do not match.'
+    }
+  ];
+
+  const validateField = (name, value) => {
+    const field = fields.find(f => f.name === name);
+    return field ? field.validate(value) : true;
+  };
+
+  const handleFieldChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormValues(prevValues => ({
+      ...prevValues,
+      [name]: value
+    }));
+
+    setFormErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: !validateField(name, value)
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const errors = fields.reduce((acc, { name }) => {
+      acc[name] = !validateField(name, formValues[name]);
+      return acc;
+    }, {});
+
+    setFormErrors(errors);
+
+    if (!Object.values(errors).includes(true)) {
+      console.log("Form submitted successfully");
+    } else {
+      console.log("Form failed to submit");
+    }
+  };
+
   return (
-    <Container className="mt-5">
-      <Row className="justify-content-center">
-        <Col md={6} lg={4}>
-          <Form className='p-4 border rounded shadow-sm'>
-            <h3 className="mb-4 text-center">Register</h3>
-            <Form.Group className="mb-3" controlId="formBasicName">
-              <Form.Label>Name</Form.Label>
-              <Form.Control type="text" placeholder="Enter Name" />
-            </Form.Group>
+    <Form className='container w-50 p-5' onSubmit={handleSubmit}>
+      {fields.map(({ name, type, placeholder, errorMessage }) => (
+        <Form.Group className="mb-3" key={name} controlId={`formBasic${name}`}>
+          <Form.Label className='w-100 text-start'>{placeholder}</Form.Label>
+          <Form.Control
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            value={formValues[name]}
+            onChange={handleFieldChange}
+            isInvalid={formErrors[name]}
+          />
+          {formErrors[name] && <Form.Text className="text-danger text-start w-100 d-block">{errorMessage}</Form.Text>}
+        </Form.Group>
+      ))}
 
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control type="email" placeholder="Enter email" />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formBasicUsername">
-              <Form.Label>User Name</Form.Label>
-              <Form.Control type="text" placeholder="Enter UserName" />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" placeholder="Password" />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control type="password" placeholder="Confirm Password" />
-            </Form.Group>
-
-            <Button variant="primary" type="submit" className="w-100">
-              Submit
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
+      <Button variant="primary" type="submit">
+        Submit
+      </Button>
+    </Form>
   );
 }
 

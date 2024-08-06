@@ -40,7 +40,7 @@ function ProductList() {
               title={product.title}
               description={product.description}
               imgSrc={product.image}
-             
+              price={product.price}
             />
             
           </Col>

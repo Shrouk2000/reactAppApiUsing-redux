@@ -5,7 +5,7 @@ import Card from 'react-bootstrap/Card';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, removeFromCart } from '../../store/slice/cartSlice';
 
-function Cards({ id, title, description, imgSrc }) {
+function Cards({ id, title,description, imgSrc, price }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const itemsInCart = useSelector(state => state.cart.items);
@@ -16,15 +16,17 @@ function Cards({ id, title, description, imgSrc }) {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    dispatch(addToCart({ id }));
+    dispatch(addToCart({ id, title, description, imgSrc, price }));
   };
 
   const handleRemoveFromCart = (e) => {
     e.stopPropagation();
-    if (itemsInCart.includes(id)) {
+    if (itemsInCart.some(item => item.id === id)) {
       dispatch(removeFromCart({ id }));
     }
   };
+
+  const isInCart = itemsInCart.some(item => item.id === id);
 
   return (
     <Card
@@ -39,12 +41,13 @@ function Cards({ id, title, description, imgSrc }) {
         <Button variant="primary" onClick={(e) => { e.stopPropagation(); navigate(`/product/${id}`); }}>
           View Details
         </Button>
-        <Button variant="success" className="m-2" onClick={handleAddToCart}>
+        {isInCart ? (
+          <Button variant="danger" className="m-2" onClick={handleRemoveFromCart}>
+            Remove
+          </Button>
+        ) : <Button variant="success" className="m-2" onClick={handleAddToCart}>
           Add To Cart
-        </Button>
-        <Button variant="danger" onClick={handleRemoveFromCart} disabled={!itemsInCart.includes(id)}>
-          Remove From Cart
-        </Button>
+        </Button>}
       </Card.Body>
     </Card>
   );
