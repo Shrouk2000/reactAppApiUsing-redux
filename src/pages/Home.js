@@ -1,4 +1,4 @@
-// import Cards from '../components/Card'
+
 import ProductList from '../components/Products/Products';
 function Home (){
     return(

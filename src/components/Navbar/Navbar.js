@@ -9,7 +9,7 @@ import LanguageContext from "../../context/LanguageContext";
 import CartIcon from '../../pages/CartIcon';
 import './Navbar.css';
 
-  function NavScrollExample({ NavbarTitle = "EcommerceApp" }) {
+  function MyNavbar({ NavbarTitle = "EcommerceApp" }) {
     const { darkMode, setDarkMode } = useContext(ThemeContext);
     const {language, setLanguage} = useContext(LanguageContext)
   return (
@@ -49,4 +49,4 @@ import './Navbar.css';
   );
 }
 
-export default NavScrollExample;
+export default MyNavbar;
