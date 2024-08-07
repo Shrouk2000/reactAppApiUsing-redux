@@ -1,0 +1,1 @@
+{"version":3,"file":"static/css/978.24b6e68c.chunk.css","mappings":"AAAE,WACE,WAAW,CACX,cACF","sources":["components/Navbar/Navbar.css"],"sourcesContent":["  .cart-icon {\r\n    color:green;\r\n    font-size: 2rem; \r\n  }\r\n "],"names":[],"sourceRoot":""}
